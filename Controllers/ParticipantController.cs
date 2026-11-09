@@ -12,7 +12,7 @@ public class ParticipantController : BaseController
 {
     private readonly IApiClient _api;
 
-    public ParticipantController(IApiClient api) => _api = api;
+    public ParticipantController(IApiClient api) => _api = api; 
 
     // ---------- Home: upcoming events with filters ----------
 
