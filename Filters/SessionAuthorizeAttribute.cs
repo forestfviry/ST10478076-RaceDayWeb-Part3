@@ -9,7 +9,7 @@ namespace RaceDayWeb.Filters;
 /// e.g. [SessionAuthorize(Roles.Organiser)].
 /// </summary>
 public class SessionAuthorizeAttribute : ActionFilterAttribute
-{
+{ 
     private readonly string[] _roles;
      
     public SessionAuthorizeAttribute(params string[] roles) => _roles = roles;
