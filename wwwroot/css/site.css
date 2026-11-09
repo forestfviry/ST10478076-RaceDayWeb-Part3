@@ -196,3 +196,244 @@ a:hover { color: var(--rd-green-dark); }
 @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; scroll-behavior: auto !important; }
 }
+/* ==========================================================
+   RaceDay: sunrise palette + motion (paste at END of site.css)
+   ========================================================== */
+:root {
+    --rd-blue: #2088d4;
+    --rd-orange: #f5791f;
+    --rd-pink: #e6407f;
+    --rd-sun: #ffc857;
+    --rd-grad: linear-gradient(90deg, var(--rd-blue), var(--rd-pink) 55%, var(--rd-orange));
+    --rd-ease: cubic-bezier(.22, .61, .36, 1);
+}
+
+/* Smooth page-to-page transitions (Chrome/Edge) */
+@view-transition {
+    navigation: auto;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+/* ---------- Gradient background (slowly drifts) ---------- */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: linear-gradient(120deg, #e3f2fc, #fde8f1, #fff0e1, #e3f2fc);
+    background-size: 300% 300%;
+    animation: rd-drift 30s ease-in-out infinite;
+}
+
+@keyframes rd-drift {
+    0%, 100% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+}
+
+/* ---------- Nav: gradient line + brand tape ---------- */
+.rd-nav {
+    position: relative;
+    border-bottom: 0;
+}
+
+    .rd-nav::after {
+        content: "";
+        position: absolute;
+        inset: auto 0 0 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--rd-blue), var(--rd-pink), var(--rd-orange));
+        background-size: 200% 100%;
+        animation: rd-slide 10s ease-in-out infinite alternate;
+    }
+
+@keyframes rd-slide {
+    from {
+        background-position: 0% 0;
+    }
+
+    to {
+        background-position: 100% 0;
+    }
+}
+
+.rd-tape {
+    background: linear-gradient(180deg, var(--rd-blue), var(--rd-pink), var(--rd-orange));
+}
+
+.rd-nav .nav-link {
+    transition: background-color .25s var(--rd-ease), color .25s var(--rd-ease);
+}
+
+/* ---------- Entrance animations ---------- */
+@keyframes rd-rise {
+    from {
+        opacity: 0;
+        transform: translateY(14px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes rd-drop {
+    from {
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+main > * {
+    animation: rd-rise .6s var(--rd-ease) both;
+}
+
+    main > *:nth-child(2) {
+        animation-delay: .06s;
+    }
+
+    main > *:nth-child(3) {
+        animation-delay: .12s;
+    }
+
+    main > *:nth-child(4) {
+        animation-delay: .18s;
+    }
+
+    main > *:nth-child(n+5) {
+        animation-delay: .24s;
+    }
+
+.alert {
+    animation: rd-drop .45s var(--rd-ease) both;
+}
+
+/* ---------- Frosted surfaces so the gradient shows through ---------- */
+.panel, .table-wrap, .filter-bar, .event-card, .empty {
+    background: rgba(255, 255, 255, 0.86);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+}
+
+/* ---------- Event cards ---------- */
+.event-card {
+    transition: transform .35s var(--rd-ease), box-shadow .35s var(--rd-ease), border-color .35s var(--rd-ease);
+}
+
+    .event-card:hover {
+        transform: translateY(-6px);
+        border-color: transparent;
+        box-shadow: 0 20px 40px -18px rgba(230, 64, 127, .4), 0 10px 20px -12px rgba(32, 136, 212, .4);
+    }
+
+    .event-card .cover {
+        transition: transform .8s var(--rd-ease);
+    }
+
+    .event-card:hover .cover {
+        transform: scale(1.06);
+    }
+
+/* The marathon picture as the default cover */
+.cover-fallback, .detail-cover-fallback {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--rd-ink);
+}
+
+    .cover-fallback::before, .detail-cover-fallback::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background: linear-gradient(to top, rgba(20, 35, 43, .55), rgba(20, 35, 43, 0) 55%), url("../images/marathon.jpg") center / cover no-repeat;
+        transition: transform .8s var(--rd-ease);
+    }
+
+.event-card:hover .cover-fallback::before {
+    transform: scale(1.07);
+}
+
+.date-chip {
+    background: linear-gradient(135deg, var(--rd-sun), var(--rd-orange));
+    box-shadow: 0 4px 12px -4px rgba(0, 0, 0, .35);
+}
+
+/* ---------- Buttons ---------- */
+.btn {
+    transition: transform .2s var(--rd-ease), box-shadow .25s var(--rd-ease), background-color .25s var(--rd-ease), color .25s var(--rd-ease), border-color .25s var(--rd-ease);
+}
+
+    .btn:hover {
+        transform: translateY(-2px);
+    }
+
+    .btn:active {
+        transform: translateY(0) scale(.98);
+    }
+
+.btn-primary {
+    background-image: linear-gradient(135deg, #0f766e, #1b84c4);
+}
+
+    .btn-primary:hover {
+        background-image: linear-gradient(135deg, #0b5d56, #1672ad);
+        box-shadow: 0 10px 22px -10px rgba(32, 136, 212, .7);
+    }
+
+/* ---------- Forms + tables ---------- */
+.form-control, .form-select {
+    transition: border-color .2s var(--rd-ease), box-shadow .2s var(--rd-ease);
+}
+
+    .form-control:focus, .form-select:focus {
+        border-color: var(--rd-blue);
+    }
+
+.table-wrap tbody tr > * {
+    transition: background-color .2s var(--rd-ease);
+}
+
+.table-wrap tbody tr:hover > * {
+    background-color: rgba(32, 136, 212, .08);
+}
+
+/* ---------- Home hero + dashboard "next event" ---------- */
+.hero h1 {
+    background: linear-gradient(90deg, var(--rd-blue), var(--rd-pink), var(--rd-orange));
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: rd-slide 8s ease-in-out infinite alternate;
+}
+
+.next {
+    background: linear-gradient(120deg, #14232b 0%, #17364f 55%, #3a2150 100%);
+}
+
+.next-date .m {
+    color: var(--rd-sun);
+}
+
+/* ---------- Respect "reduce motion" ---------- */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
