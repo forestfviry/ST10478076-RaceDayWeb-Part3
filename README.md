@@ -1,6 +1,6 @@
 # RaceDayWeb
 
-ASP.NET Core MVC front end for the RaceDay platform. It has no database access and no business rules of its own. Everything goes through the RaceDayAPI, including all image uploads to Azure Blob Storage.
+ASP.NET Core MVC front end for the RaceDay platform. It has no database access and no business rules of its own. Everything goes through the RaceDayAPI, including all image uploads to Azure Blob Storage. 
 
 ## Run it locally
 
