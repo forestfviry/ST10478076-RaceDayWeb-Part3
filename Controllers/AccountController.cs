@@ -7,7 +7,7 @@ using RaceDayWeb.Services;
 namespace RaceDayWeb.Controllers;
 
 public class AccountController : BaseController
-{
+{ 
     private readonly IApiClient _api;
 
     public AccountController(IApiClient api) => _api = api;
