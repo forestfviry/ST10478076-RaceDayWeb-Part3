@@ -349,7 +349,7 @@ main > * {
 
 /* The marathon picture as the default cover */
 .cover-fallback, .detail-cover-fallback {
-    position: relative;
+    position: relative; 
     overflow: hidden;
     isolation: isolate;
     background: var(--rd-ink);
