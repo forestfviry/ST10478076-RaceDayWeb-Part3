@@ -10,7 +10,7 @@ public class ApiResult
 {
     public bool Success { get; init; }
     public HttpStatusCode StatusCode { get; init; }
-    public string? Error { get; init; }
+    public string? Error { get; init; } 
     public bool IsUnauthorized => StatusCode == HttpStatusCode.Unauthorized;
     public bool IsForbidden => StatusCode == HttpStatusCode.Forbidden;
 }
