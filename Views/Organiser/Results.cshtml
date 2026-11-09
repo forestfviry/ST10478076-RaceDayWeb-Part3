@@ -1,0 +1,74 @@
+@model ResultsEntryViewModel
+@{
+    ViewData["Title"] = "Results";
+    var disabled = Model.Locked;
+    var lastCategory = "";
+}
+<a class="back-link" asp-action="Events">Back to my events</a>
+<div class="page-head">
+    <div>
+        <h1>Results</h1>
+        <p>@Model.Event.EventName, @Display.Date(Model.Event.EventDate)</p>
+    </div>
+</div>
+
+@if (Model.Locked)
+{
+    <div class="alert alert-info">Results open on the day of the event, @Display.Date(Model.Event.EventDate).</div>
+}
+
+@if (!Model.Rows.Any())
+{
+    <div class="empty">
+        <h2>No one to record results for</h2>
+        <p>Results can be entered once participants have enrolled.</p>
+    </div>
+}
+else
+{
+    <form asp-action="Results" asp-route-eventId="@Model.Event.EventID" method="post" novalidate>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+        <div class="table-wrap mb-3">
+            <table class="table results-table">
+                <thead>
+                    <tr><th>Participant</th><th>Finish time</th><th class="col-pos">Position</th></tr>
+                </thead>
+                <tbody>
+                    @for (var i = 0; i < Model.Rows.Count; i++)
+                    {
+                        var row = Model.Rows[i];
+                        if (row.CategoryName != lastCategory)
+                        {
+                            lastCategory = row.CategoryName;
+                            <tr class="category-row"><td colspan="3">@row.CategoryName</td></tr>
+                        }
+                        <tr>
+                            <td>
+                                <input type="hidden" asp-for="Rows[i].EnrolmentId" />
+                                <input type="hidden" asp-for="Rows[i].ResultId" />
+                                <input type="hidden" asp-for="Rows[i].CategoryId" />
+                                <input type="hidden" asp-for="Rows[i].CategoryName" />
+                                <input type="hidden" asp-for="Rows[i].ParticipantName" />
+                                <span class="event-name">@row.ParticipantName</span>
+                            </td>
+                            <td>
+                                <input asp-for="Rows[i].FinishTime" class="form-control" placeholder="hh:mm:ss" inputmode="numeric"
+                                       aria-label="Finish time for @row.ParticipantName" disabled="@disabled" />
+                                <span asp-validation-for="Rows[i].FinishTime"></span>
+                            </td>
+                            <td class="col-pos">
+                                <input asp-for="Rows[i].Position" type="number" min="1" class="form-control"
+                                       aria-label="Position for @row.ParticipantName" disabled="@disabled" />
+                                <span asp-validation-for="Rows[i].Position"></span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <button type="submit" class="btn btn-primary" disabled="@disabled">Publish results</button>
+        <p class="form-hint mt-2">Positions are per category. Leave a row empty if the participant didn't finish. Saved results are visible to participants straight away.</p>
+    </form>
+}

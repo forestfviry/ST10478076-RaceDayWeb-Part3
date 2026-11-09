@@ -1,0 +1,105 @@
+@model EventListViewModel
+@{
+    ViewData["Title"] = "Events";
+}
+<div class="page-head">
+    <div>
+        <h1>Upcoming events</h1>
+        <p>Hi, @Context.Session.GetUserName(). Find a race and enrol.</p>
+    </div>
+</div>
+
+<form method="get" asp-action="Index" class="filter-bar">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-4">
+            <label for="q" class="form-label">Search</label>
+            <input id="q" name="q" value="@Model.Q" class="form-control" placeholder="Name, place or keyword" />
+        </div>
+        <div class="col-6 col-md-2">
+            <label for="location" class="form-label">Location</label>
+            <select id="location" name="location" class="form-select">
+                <option value="">Any</option>
+                @foreach (var l in Model.Locations)
+                {
+                    <option value="@l" selected="@(l == Model.Location)">@l</option>
+                }
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <label for="type" class="form-label">Type</label>
+            <select id="type" name="type" class="form-select">
+                <option value="">Any</option>
+                @foreach (var t in Model.Types)
+                {
+                    <option value="@t" selected="@(t == Model.Type)">@t</option>
+                }
+            </select>
+        </div>
+        <div class="col-6 col-md-2">
+            <label for="from" class="form-label">From</label>
+            <input id="from" name="from" type="date" value="@Model.From?.ToString("yyyy-MM-dd")" class="form-control" />
+        </div>
+        <div class="col-6 col-md-2">
+            <label for="to" class="form-label">To</label>
+            <input id="to" name="to" type="date" value="@Model.To?.ToString("yyyy-MM-dd")" class="form-control" />
+        </div>
+    </div>
+    <div class="mt-3 d-flex gap-2">
+        <button type="submit" class="btn btn-primary btn-sm">Apply filters</button>
+        @if (Model.HasFilters)
+        {
+            <a class="btn btn-outline-dark btn-sm" asp-action="Index">Clear</a>
+        }
+    </div>
+</form>
+
+@if (!Model.Events.Any())
+{
+    <div class="empty">
+        @if (Model.HasFilters)
+        {
+            <h2>No events match those filters</h2>
+            <p>Try a wider date range or clear the filters.</p>
+            <a class="btn btn-primary" asp-action="Index">Clear filters</a>
+        }
+        else
+        {
+            <h2>No upcoming events</h2>
+            <p>New events will show up here as organisers publish them.</p>
+        }
+    </div>
+}
+else
+{
+    <p class="form-hint mb-3">Showing @Model.Events.Count of @Model.TotalUpcoming upcoming @(Model.TotalUpcoming == 1 ? "event" : "events").</p>
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var e in Model.Events)
+        {
+            <div class="col">
+                <article class="event-card">
+                    <a asp-action="EventDetails" asp-route-id="@e.EventID" tabindex="-1" aria-hidden="true">
+                        @if (!string.IsNullOrWhiteSpace(e.BannerUrl))
+                        {
+                            <img class="cover" src="@e.BannerUrl" alt="" loading="lazy" />
+                        }
+                        else
+                        {
+                            <div class="cover-fallback"><span class="date-chip">@e.EventDate.ToString("d MMM")</span></div>
+                        }
+                    </a>
+                    <div class="body">
+                        <h3><a asp-action="EventDetails" asp-route-id="@e.EventID">@e.EventName</a></h3>
+                        <p class="meta">
+                            @Display.Date(e.EventDate), @e.Location
+                            @if (!string.IsNullOrWhiteSpace(e.EventType) || e.DistanceKm.HasValue)
+                            {
+                                <br />@e.EventType@(e.DistanceKm.HasValue ? (string.IsNullOrWhiteSpace(e.EventType) ? "" : ", ") + Display.Km(e.DistanceKm.Value) : "")
+                            }
+                        </p>
+                        <a class="btn btn-outline-dark btn-sm more align-self-start" asp-action="EventDetails" asp-route-id="@e.EventID">View event</a>
+                    </div>
+                </article>
+            </div>
+        }
+    </div>
+}

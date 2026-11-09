@@ -1,0 +1,74 @@
+@model List<EventDto>
+@{
+    ViewData["Title"] = "My events";
+}
+<div class="page-head">
+    <div>
+        <h1>My events</h1>
+        <p>Create, edit and manage the races you organise.</p>
+    </div>
+    <a class="btn btn-primary" asp-action="CreateEvent">New event</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty">
+        <h2>No events yet</h2>
+        <p>Your events will be listed here once you create one.</p>
+        <a class="btn btn-primary" asp-action="CreateEvent">Create an event</a>
+    </div>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Banner</th>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>Location</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model)
+                {
+                    <tr>
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(e.BannerUrl))
+                            {
+                                <img class="banner-thumb" src="@e.BannerUrl" alt="Banner for @e.EventName" loading="lazy" />
+                            }
+                            else
+                            {
+                                <span class="banner-thumb empty-thumb" role="img" aria-label="No banner"></span>
+                            }
+                        </td>
+                        <td>
+                            <span class="event-name">@e.EventName</span>
+                            @if (!string.IsNullOrWhiteSpace(e.EventType) || e.DistanceKm.HasValue)
+                            {
+                                <div class="event-sub">@e.EventType@(e.DistanceKm.HasValue ? ", " + Display.Km(e.DistanceKm.Value) : "")</div>
+                            }
+                        </td>
+                        <td>@Display.Date(e.EventDate)</td>
+                        <td>@e.Location</td>
+                        <td>
+                            <div class="row-actions">
+                                <a class="btn btn-outline-dark btn-sm" asp-action="Categories" asp-route-eventId="@e.EventID">Categories</a>
+                                <a class="btn btn-outline-dark btn-sm" asp-action="Enrolments" asp-route-eventId="@e.EventID">Enrolments</a>
+                                <a class="btn btn-outline-dark btn-sm" asp-action="Results" asp-route-eventId="@e.EventID">Results</a>
+                                <a class="btn btn-outline-dark btn-sm" asp-action="EditEvent" asp-route-id="@e.EventID">Edit</a>
+                                <form asp-action="DeleteEvent" asp-route-id="@e.EventID" method="post"
+                                      onsubmit="return confirm('Delete this event? This can\'t be undone.');">
+                                    <button type="submit" class="btn btn-outline-danger btn-sm">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

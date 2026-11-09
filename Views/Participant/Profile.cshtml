@@ -1,0 +1,65 @@
+@model ProfilePageViewModel
+@{
+    ViewData["Title"] = "Profile";
+}
+<div class="page-head">
+    <div>
+        <h1>Profile</h1>
+        <p>Your details and profile picture.</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-4">
+        <div class="panel">
+            <div class="mb-3">
+                @if (!string.IsNullOrWhiteSpace(Model.User.ProfilePictureUrl))
+                {
+                    <img class="avatar" src="@Model.User.ProfilePictureUrl" alt="Your profile picture" />
+                }
+                else
+                {
+                    <div class="avatar-fallback" aria-hidden="true">@(Model.User.FullName.Length > 0 ? Model.User.FullName[..1].ToUpperInvariant() : "?")</div>
+                }
+            </div>
+            <form asp-action="UploadPicture" method="post" enctype="multipart/form-data">
+                <label for="picture" class="form-label">Profile picture</label>
+                <input id="picture" name="picture" type="file" class="form-control mb-2" accept="image/jpeg,image/png,image/webp" required />
+                <div class="form-hint mb-3">JPG, PNG or WebP, up to 5 MB.</div>
+                <button type="submit" class="btn btn-outline-dark btn-sm">Upload picture</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-8">
+        <div class="panel">
+            <h2>Your details</h2>
+            <form asp-action="Profile" method="post" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label asp-for="Form.FullName" class="form-label"></label>
+                        <input asp-for="Form.FullName" class="form-control" maxlength="100" />
+                        <span asp-validation-for="Form.FullName"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Form.PhoneNumber" class="form-label"></label>
+                        <input asp-for="Form.PhoneNumber" class="form-control" autocomplete="tel" />
+                        <span asp-validation-for="Form.PhoneNumber"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="email">Email</label>
+                        <input id="email" class="form-control" value="@Model.User.Email" readonly />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" for="since">Member since</label>
+                        <input id="since" class="form-control" value="@Display.Date(Model.User.CreatedAt)" readonly />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary mt-4">Save details</button>
+            </form>
+        </div>
+    </div>
+</div>

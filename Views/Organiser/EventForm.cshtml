@@ -1,0 +1,84 @@
+@model EventFormViewModel
+@{
+    var isNew = Model.Id == 0;
+    ViewData["Title"] = isNew ? "New event" : "Edit event";
+}
+<a class="back-link" asp-action="Events">Back to my events</a>
+<div class="page-head">
+    <h1>@ViewData["Title"]</h1>
+</div>
+
+<div class="panel">
+    <form asp-action="@(isNew ? "CreateEvent" : "EditEvent")" asp-route-id="@(isNew ? (int?)null : Model.Id)"
+          method="post" enctype="multipart/form-data" novalidate>
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+        <input type="hidden" asp-for="ExistingBannerUrl" />
+
+        <div class="row g-3">
+            <div class="col-12">
+                <label asp-for="EventName" class="form-label"></label>
+                <input asp-for="EventName" class="form-control" maxlength="100" />
+                <span asp-validation-for="EventName"></span>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="Description" class="form-label"></label>
+                <textarea asp-for="Description" class="form-control" rows="4" maxlength="500"></textarea>
+                <span asp-validation-for="Description"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="EventDate" class="form-label"></label>
+                <input asp-for="EventDate" type="date" class="form-control" />
+                <span asp-validation-for="EventDate"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="Location" class="form-label"></label>
+                <input asp-for="Location" class="form-control" maxlength="150" />
+                <span asp-validation-for="Location"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="DistanceKm" class="form-label"></label>
+                <input asp-for="DistanceKm" type="number" step="0.1" min="0.1" class="form-control" />
+                <span asp-validation-for="DistanceKm"></span>
+            </div>
+
+            <div class="col-md-6">
+                <label asp-for="EventType" class="form-label"></label>
+                <select asp-for="EventType" class="form-select" asp-items="@(new SelectList(EventFormViewModel.EventTypes))">
+                    <option value="">Choose a type</option>
+                </select>
+                <span asp-validation-for="EventType"></span>
+            </div>
+
+            <div class="col-12">
+                <label asp-for="BannerFile" class="form-label"></label>
+                <input asp-for="BannerFile" type="file" class="form-control" accept="image/jpeg,image/png,image/webp" />
+                <div class="form-hint">JPG, PNG or WebP, up to 5 MB.@(isNew ? "" : " Leave empty to keep the current banner.")</div>
+                <span asp-validation-for="BannerFile"></span>
+                <img id="bannerPreview" class="banner-preview" alt="Banner preview"
+                     src="@Model.ExistingBannerUrl" @(string.IsNullOrWhiteSpace(Model.ExistingBannerUrl) ? "hidden" : "") />
+            </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-2">
+            <button type="submit" class="btn btn-primary">@(isNew ? "Create event" : "Save changes")</button>
+            <a class="btn btn-outline-dark" asp-action="Events">Cancel</a>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        const input = document.getElementById('BannerFile');
+        const preview = document.getElementById('bannerPreview');
+        input.addEventListener('change', () => {
+            const file = input.files[0];
+            if (!file) return;
+            preview.src = URL.createObjectURL(file);
+            preview.hidden = false;
+        });
+    </script>
+}

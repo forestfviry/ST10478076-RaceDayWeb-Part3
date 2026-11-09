@@ -1,0 +1,54 @@
+@model List<MyResultDto>
+@{
+    ViewData["Title"] = "My results";
+}
+<div class="page-head">
+    <div>
+        <h1>My results</h1>
+        <p>Your race history, newest first. Organisers add results after each event.</p>
+    </div>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="empty">
+        <h2>No results yet</h2>
+        <p>Once an organiser publishes results for a race you entered, they'll show up here.</p>
+        <a class="btn btn-primary" asp-action="MyEnrolments">See my enrolments</a>
+    </div>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr><th>Event</th><th>Date</th><th>Category</th><th>Finish time</th><th>Position</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model)
+                {
+                    <tr>
+                        <td class="event-name">@r.EventName</td>
+                        <td>@Display.Date(r.EventDate)</td>
+                        <td>@r.CategoryName</td>
+                        <td>@(r.FinishTime ?? "Not recorded")</td>
+                        <td>
+                            @if (r.Position.HasValue)
+                            {
+                                <span class="position">@Display.Ordinal(r.Position.Value)</span>
+                                @if (r.TotalFinishers > 0)
+                                {
+                                    <small> of @r.TotalFinishers</small>
+                                }
+                            }
+                            else
+                            {
+                                <span class="event-sub">@r.Status</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

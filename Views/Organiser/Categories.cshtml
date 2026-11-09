@@ -1,0 +1,83 @@
+@model CategoriesPageViewModel
+@{
+    ViewData["Title"] = "Categories";
+}
+<a class="back-link" asp-action="Events">Back to my events</a>
+<div class="page-head">
+    <div>
+        <h1>Categories</h1>
+        <p>@Model.Event.EventName, @Display.Date(Model.Event.EventDate)</p>
+    </div>
+</div>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        @if (!Model.Categories.Any())
+        {
+            <div class="empty">
+                <h2>No categories yet</h2>
+                <p>Add a distance or an age group, like "10 km" or "Under 20s", so participants can pick where they fit.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-wrap">
+                <table class="table">
+                    <thead>
+                        <tr><th>Category</th><th>Distance</th><th>Fee</th><th class="text-end">Max</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var c in Model.Categories)
+                        {
+                            <tr>
+                                <td class="event-name">@c.CategoryName</td>
+                                <td>@Display.Km(c.DistanceKm)</td>
+                                <td>@Display.Money(c.EntryFee)</td>
+                                <td class="text-end">@c.MaxParticipants</td>
+                                <td class="text-end">
+                                    <form asp-action="DeleteCategory" asp-route-eventId="@Model.Event.EventID" asp-route-categoryId="@c.CategoryID" method="post"
+                                          onsubmit="return confirm('Remove this category? Anyone enrolled in it will be removed too.');">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">Remove</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    <div class="col-lg-5">
+        <div class="panel">
+            <h2>Add a category</h2>
+            <form asp-action="AddCategory" asp-route-eventId="@Model.Event.EventID" method="post" novalidate>
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="Form.CategoryName" class="form-label"></label>
+                    <input asp-for="Form.CategoryName" class="form-control" maxlength="50" placeholder="10 km Race, Under 20s, Masters 40+" />
+                    <span asp-validation-for="Form.CategoryName"></span>
+                </div>
+                <div class="mb-3">
+                    <label asp-for="Form.DistanceKm" class="form-label"></label>
+                    <input asp-for="Form.DistanceKm" type="number" step="0.1" min="0.1" class="form-control" />
+                    <span asp-validation-for="Form.DistanceKm"></span>
+                </div>
+                <div class="row g-3 mb-4">
+                    <div class="col-6">
+                        <label asp-for="Form.MaxParticipants" class="form-label"></label>
+                        <input asp-for="Form.MaxParticipants" type="number" min="1" class="form-control" />
+                        <span asp-validation-for="Form.MaxParticipants"></span>
+                    </div>
+                    <div class="col-6">
+                        <label asp-for="Form.EntryFee" class="form-label"></label>
+                        <input asp-for="Form.EntryFee" type="number" step="0.01" min="0" class="form-control" />
+                        <span asp-validation-for="Form.EntryFee"></span>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Add category</button>
+            </form>
+        </div>
+    </div>
+</div>

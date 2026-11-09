@@ -1,0 +1,47 @@
+@model EnrolmentsPageViewModel
+@{
+    ViewData["Title"] = "Enrolments";
+}
+<a class="back-link" asp-action="Events">Back to my events</a>
+<div class="page-head">
+    <div>
+        <h1>Enrolments</h1>
+        <p>@Model.Event.EventName, @Display.Date(Model.Event.EventDate). @Model.Enrolments.Count @(Model.Enrolments.Count == 1 ? "participant" : "participants") enrolled.</p>
+    </div>
+    <a class="btn btn-outline-dark" asp-action="Results" asp-route-eventId="@Model.Event.EventID">Enter results</a>
+</div>
+
+@if (!Model.Enrolments.Any())
+{
+    <div class="empty">
+        <h2>No one has enrolled yet</h2>
+        <p>Participants will appear here once they pick a category for this event.</p>
+    </div>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr><th>Participant</th><th>Category</th><th>Status</th><th>Enrolled</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var e in Model.Enrolments)
+                {
+                    <tr>
+                        <td>
+                            <span class="event-name">@e.ParticipantName</span>
+                            @if (!string.IsNullOrWhiteSpace(e.ParticipantEmail))
+                            {
+                                <div class="event-sub">@e.ParticipantEmail</div>
+                            }
+                        </td>
+                        <td>@e.CategoryName</td>
+                        <td><span class="status @Display.StatusClass(e.Status)">@e.Status</span></td>
+                        <td>@Display.Date(e.EnrolmentDate)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,0 +1,89 @@
+@model EventDetailsViewModel
+@{
+    ViewData["Title"] = Model.Event.EventName;
+}
+<a class="back-link" asp-action="Index">Back to events</a>
+
+@if (!string.IsNullOrWhiteSpace(Model.Event.BannerUrl))
+{
+    <img class="detail-cover" src="@Model.Event.BannerUrl" alt="Banner for @Model.Event.EventName" />
+}
+else
+{
+    <div class="detail-cover-fallback" role="img" aria-label="No banner image"></div>
+}
+
+<div class="page-head">
+    <div>
+        <h1>@Model.Event.EventName</h1>
+        @if (!string.IsNullOrWhiteSpace(Model.Event.OrganiserName))
+        {
+            <p>Organised by @Model.Event.OrganiserName</p>
+        }
+    </div>
+</div>
+
+<ul class="facts">
+    <li><strong>@Display.Date(Model.Event.EventDate)</strong></li>
+    <li><strong>@Model.Event.Location</strong></li>
+    @if (!string.IsNullOrWhiteSpace(Model.Event.EventType))
+    {
+        <li><strong>@Model.Event.EventType</strong></li>
+    }
+    @if (Model.Event.DistanceKm.HasValue)
+    {
+        <li><strong>@Display.Km(Model.Event.DistanceKm.Value)</strong></li>
+    }
+</ul>
+
+@if (!string.IsNullOrWhiteSpace(Model.Event.Description))
+{
+    <p class="mb-4" style="max-width: 70ch;">@Model.Event.Description</p>
+}
+
+<h2>Categories</h2>
+@if (Model.IsPast)
+{
+    <div class="alert alert-info">This event has already taken place, so enrolment is closed.</div>
+}
+
+@if (!Model.Categories.Any())
+{
+    <div class="empty">
+        <h2>No categories yet</h2>
+        <p>The organiser hasn't added any categories. Check back soon.</p>
+    </div>
+}
+else
+{
+    <div class="table-wrap">
+        <table class="table">
+            <thead>
+                <tr><th>Category</th><th>Distance</th><th>Entry fee</th><th class="text-end">Places</th><th></th></tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.Categories)
+                {
+                    <tr>
+                        <td class="event-name">@c.CategoryName</td>
+                        <td>@Display.Km(c.DistanceKm)</td>
+                        <td>@Display.Money(c.EntryFee)</td>
+                        <td class="text-end">@c.MaxParticipants</td>
+                        <td class="text-end">
+                            @if (Model.EnrolledCategoryIds.Contains(c.CategoryID))
+                            {
+                                <span class="status status-good">You're enrolled</span>
+                            }
+                            else if (!Model.IsPast)
+                            {
+                                <form asp-action="Enrol" asp-route-categoryId="@c.CategoryID" asp-route-eventId="@Model.Event.EventID" method="post">
+                                    <button type="submit" class="btn btn-primary btn-sm">Enrol</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

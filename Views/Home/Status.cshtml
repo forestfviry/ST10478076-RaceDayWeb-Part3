@@ -1,0 +1,9 @@
+@{
+    ViewData["Title"] = "Page not available";
+    var code = ViewBag.Code as int? ?? 0;
+}
+<div class="empty">
+    <h2>@(code == 404 ? "That page doesn't exist" : "That page isn't available")</h2>
+    <p>Check the address, or head back to the start.</p>
+    <a class="btn btn-primary" asp-controller="Home" asp-action="Index">Back to start</a>
+</div>
