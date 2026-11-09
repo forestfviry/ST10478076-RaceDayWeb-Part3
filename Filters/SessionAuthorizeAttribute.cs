@@ -11,7 +11,7 @@ namespace RaceDayWeb.Filters;
 public class SessionAuthorizeAttribute : ActionFilterAttribute
 {
     private readonly string[] _roles;
-
+     
     public SessionAuthorizeAttribute(params string[] roles) => _roles = roles;
 
     public override void OnActionExecuting(ActionExecutingContext context)
