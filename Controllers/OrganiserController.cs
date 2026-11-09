@@ -11,7 +11,7 @@ namespace RaceDayWeb.Controllers;
 [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
 public class OrganiserController : BaseController
 {
-    private readonly IApiClient _api;
+    private readonly IApiClient _api; 
 
     public OrganiserController(IApiClient api) => _api = api;
 
